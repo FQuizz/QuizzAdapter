@@ -16,7 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Table(name = "quizzes")
-public class Quiz {
+public class QuizEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "quiz_id")
@@ -26,5 +26,5 @@ public class Quiz {
     private Long createBy;
     private Date createAt;
     @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Question> questions;
+    private Set<QuestionEntity> questions;
 }
