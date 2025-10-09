@@ -1,12 +1,14 @@
 package com.fpt.quiz_adapter.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -14,20 +16,24 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table
-public class QuestionEntity {
+@Table(name = "questions")
+public class Question {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "question_id")
     private UUID id;
     private String content;
     private Boolean isActive;
     @Enumerated(EnumType.STRING)
     private QuestionType questionType;
-    private Integer position;
+    private Integer questionPosition;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quiz_id", nullable = false)
-    private QuizEntity quiz;
+    @JsonIgnore
+    private Quiz quiz;
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<ChoiceEntity> choices;
+    @JsonIgnore
+    private List<Choice> choices;
+    @OneToMany(mappedBy = "question",cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Answer> answers;
 }
