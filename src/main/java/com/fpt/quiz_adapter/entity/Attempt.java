@@ -20,7 +20,7 @@ public class Attempt {
     @Id
     @Column(name = "attempt_id")
     private UUID id;
-    private Long userId;
+    private String username;
     private LocalDateTime startAt;
     private LocalDateTime completeAt;
     private Integer score;

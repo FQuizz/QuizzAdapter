@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface QuestionRepository extends JpaRepository<Question, UUID> {
-    @Query("SELECT q FROM Question q where q.quiz.id = ?1")
-    List<Question> findAllByQuizId(UUID quizId);
+public interface QuestionRepository extends JpaRepository<Question,Long> {
+
 }
