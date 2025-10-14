@@ -38,6 +38,8 @@ public class Quiz {
     @Column(nullable = false)
     private String title;
     private String description;
+    @Builder.Default
+    private Integer totalQuestion = 0;
     @Enumerated(EnumType.STRING)
     @Builder.Default
     @Column(nullable = false)
@@ -54,7 +56,7 @@ public class Quiz {
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private Status status = Status.ACTIVE;
-    @OneToOne(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonIgnore
-    private QuestionSet questionSet;
+    private List<QuestionSet> questionSet;
 }

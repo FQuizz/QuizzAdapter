@@ -11,6 +11,7 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,16 +23,23 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Table(name = "questions")
+@EntityListeners(AuditingEntityListener.class)
 public class Question {
     @Id
-    @Column(name = "question_id")
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "question_id", nullable = false, unique = true)
+    private UUID questionId;
+    @Column(nullable = false)
     private String content;
     @Enumerated(EnumType.STRING)
-    private QuestionType questionType;
-    private Integer questionPosition;
-    private Integer point;
-    private Integer timeLimit;
+    @Builder.Default
+    private QuestionType questionType = QuestionType.SINGLE_CHOICE;
+    private String fact;
+    @Builder.Default
+    private Integer point = 1;
+    @Builder.Default
+    private Integer timeLimit = 20;
     @CreatedBy
     private Long createBy;
     @CreatedDate
@@ -40,10 +48,12 @@ public class Question {
     private Long modifiedBy;
     @LastModifiedDate
     private LocalDateTime modifiedAt;
-    private Status status;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private Status status = Status.ACTIVE;
+    @OneToMany(mappedBy = "question",cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private QuestionSet belongedQuestionSet;
+    private List<QuestionSet> belongedQuestionSet;
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Choice> choices;

@@ -36,4 +36,10 @@ public final class QuizSpecification {
                 );
         };
     };
+
+    public static Specification<Quiz> notTerminate(){
+        return (root, query, criteriaBuilder) -> {
+            return criteriaBuilder.notEqual(root.get("status"),Status.TERMINATE);
+        };
+    }
 }
