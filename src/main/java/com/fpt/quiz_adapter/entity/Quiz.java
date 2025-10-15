@@ -31,10 +31,10 @@ import java.util.UUID;
 public class Quiz {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     private Long id;
     @Column(unique = true,nullable = false)
-    private UUID quizId;
+    @Builder.Default
+    private UUID quizId = UUID.randomUUID();
     @Column(nullable = false)
     private String title;
     private String description;

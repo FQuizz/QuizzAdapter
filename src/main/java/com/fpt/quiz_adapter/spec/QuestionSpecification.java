@@ -4,6 +4,8 @@ import com.fpt.quiz_adapter.entity.Question;
 import com.fpt.quiz_adapter.entity.Status;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.UUID;
+
 public final class QuestionSpecification {
     private QuestionSpecification() {}
     public static Specification<Question> notTerminate(){
@@ -12,9 +14,9 @@ public final class QuestionSpecification {
         };
     }
 
-    public static Specification<Question> hasId(Long id){
+    public static Specification<Question> hasQuestionId(UUID questionId){
         return (root, query, criteriaBuilder) -> {
-            return criteriaBuilder.equal(root.get("id"),id);
+            return criteriaBuilder.equal(root.get("questionId"),questionId);
         };
     }
 

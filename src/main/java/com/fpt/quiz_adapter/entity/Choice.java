@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.apachecommons.CommonsLog;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,12 +19,14 @@ import java.util.UUID;
 @Table(name = "choices")
 public class Choice {
     @Id
-    @Column(name = "choice_id")
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID choiceId;
+    @Column(nullable = false)
     private String content;
+    @Column(nullable = false)
     private Boolean isCorrect;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "question_id")
+    @JoinColumn(name = "question_id", nullable = false)
     @JsonIgnore
     private Question question;
     @ManyToMany

@@ -17,7 +17,7 @@ public interface QuizService {
     @PostMapping("/create-quiz")
     Optional<Quiz> createQuiz(@RequestBody Quiz quiz);
     @PostMapping("/add-question/{quizId}/{questionId}")
-    void addQuestion(@PathVariable Long quizId, @PathVariable Long questionId);
+    void addQuestion(@PathVariable UUID quizId, @PathVariable UUID questionId);
     @PutMapping("/update-quiz/{quizId}")
     Optional<Quiz> updateQuiz(@PathVariable UUID quzId, @RequestBody Quiz quiz);
     @DeleteMapping("/delete-quiz/{quizId}")

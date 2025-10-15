@@ -28,8 +28,9 @@ public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Builder.Default
     @Column(name = "question_id", nullable = false, unique = true)
-    private UUID questionId;
+    private UUID questionId = UUID.randomUUID();
     @Column(nullable = false)
     private String content;
     @Enumerated(EnumType.STRING)
@@ -55,7 +56,6 @@ public class Question {
     @JsonIgnore
     private List<QuestionSet> belongedQuestionSet;
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
     private List<Choice> choices;
     @OneToMany(mappedBy = "question",cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore

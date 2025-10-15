@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
+import java.util.UUID;
 
 public interface QuestionService {
     @GetMapping("/get-all-questions-in-quiz/{id}")
@@ -15,7 +16,7 @@ public interface QuestionService {
     @PostMapping("/create-question")
     Optional<Question> createQuestion( @RequestBody Question question);
     @PutMapping("/update-question/{questionId}")
-    Optional<Question> updateQuestion(@PathVariable Long questionId, @RequestBody Question question);
+    Optional<Question> updateQuestion(@PathVariable UUID questionId, @RequestBody Question question);
     @DeleteMapping("/delete-question/{questionId}")
-    void deleteQuestion(@PathVariable Long questionId);
+    void deleteQuestion(@PathVariable UUID questionId);
 }

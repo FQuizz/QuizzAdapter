@@ -15,4 +15,5 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface QuizRepository extends JpaRepository<Quiz, Long> , JpaSpecificationExecutor<Quiz> {
+    Optional<Quiz> findByQuizId(UUID quizId);
 }

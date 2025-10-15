@@ -4,6 +4,7 @@ import com.fpt.quiz_adapter.entity.Question;
 import com.fpt.quiz_adapter.entity.QuestionSet;
 import com.fpt.quiz_adapter.entity.Quiz;
 import com.fpt.quiz_adapter.entity.Status;
+import com.fpt.quiz_adapter.repository.QuestionRepository;
 import com.fpt.quiz_adapter.repository.QuestionSetRepository;
 import com.fpt.quiz_adapter.repository.QuizRepository;
 import com.fpt.quiz_adapter.service.QuizService;
@@ -23,6 +24,7 @@ import java.util.UUID;
 public class QuizServiceImpl implements QuizService {
     private final QuizRepository quizRepository;
     private final QuestionSetRepository questionSetRepository;
+    private final QuestionRepository questionRepository;
     @Override
     public List<Quiz> getAllPublicQuizzes() {
         return quizRepository
@@ -50,19 +52,20 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public void addQuestion(Long quizId, Long questionId) {
-        quizRepository.findById(quizId)
+    public void addQuestion(UUID quizId, UUID questionId) {
+        quizRepository.findByQuizId(quizId)
             .ifPresent(quiz -> {
-                Question question = Question.builder()
-                    .id(questionId)
-                    .build();
-                questionSetRepository.save(QuestionSet.builder()
-                        .quiz(quiz)
-                        .question(question)
-                        .position(quiz.getTotalQuestion())
-                    .build());
-                quiz.setTotalQuestion(quiz.getTotalQuestion() + 1);
-                quizRepository.save(quiz);
+                 questionRepository.findByQuestionId(questionId)
+                        .ifPresent( question -> {
+                            questionSetRepository.save(QuestionSet.builder()
+                                .quiz(quiz)
+                                .question(question)
+                                .position(quiz.getTotalQuestion())
+                                .build());
+                            quiz.setTotalQuestion(quiz.getTotalQuestion() + 1);
+                            quizRepository.save(quiz);
+                        });
+
             });
     }
 
