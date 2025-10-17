@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.apachecommons.CommonsLog;
+import org.hibernate.annotations.Formula;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -38,8 +39,12 @@ public class Quiz {
     @Column(nullable = false)
     private String title;
     private String description;
-    @Builder.Default
-    private Integer totalQuestion = 0;
+    @Enumerated(EnumType.STRING)
+    private Difficulty difficulty;
+    @Formula("(SELECT count(*) FROM question_set qs WHERE qs.quiz_id = id)")
+    private Integer totalQuestion;
+    @Formula("(SELECT count(*) FROM attempts a WHERE a.quiz_id = id)")
+    private Long totalAttempt;
     @Enumerated(EnumType.STRING)
     @Builder.Default
     @Column(nullable = false)
@@ -56,7 +61,10 @@ public class Quiz {
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private Status status = Status.ACTIVE;
-    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<QuestionSet> questionSet;
+    @OneToMany(mappedBy = "quiz",cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Attempt> attempts;
 }

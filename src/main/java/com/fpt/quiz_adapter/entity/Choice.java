@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.apachecommons.CommonsLog;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -19,8 +20,11 @@ import java.util.UUID;
 @Table(name = "choices")
 public class Choice {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID choiceId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(unique = true, nullable = false)
+    @Builder.Default
+    private UUID choiceId = UUID.randomUUID();
     @Column(nullable = false)
     private String content;
     @Column(nullable = false)
@@ -30,11 +34,9 @@ public class Choice {
     @JsonIgnore
     private Question question;
     @ManyToMany
-    @JoinTable(name = "answer_choice", joinColumns = {
-        @JoinColumn(name = "answer_id"),
-    },inverseJoinColumns = {
-        @JoinColumn(name = "choice_id")
-    })
+    @JoinTable(name = "answer_choice",
+        joinColumns = @JoinColumn(name = "choice_id"),
+        inverseJoinColumns = @JoinColumn(name = "answer_id"))
     @JsonIgnore
-    private List<Answer> answers;
+    List<Answer> answers;
 }
