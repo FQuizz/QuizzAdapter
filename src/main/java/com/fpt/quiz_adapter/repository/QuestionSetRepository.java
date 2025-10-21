@@ -6,9 +6,14 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+import java.util.UUID;
+
 public interface QuestionSetRepository extends JpaRepository<QuestionSet,Long>{
     @Modifying
     @Transactional
     @Query("DELETE FROM QuestionSet qs WHERE qs.quiz.id = ?1 AND qs.question.id = ?2")
     void deleteQuestionFromQuiz(Long quizId, Long questionId);
+    @Query("SELECT qs FROM QuestionSet qs WHERE qs.quiz.quizId = ?1 AND qs.question.questionId = ?2")
+    Optional<QuestionSet> findByQuizIdAndQuestionId(UUID quizId, UUID questionId);
 }

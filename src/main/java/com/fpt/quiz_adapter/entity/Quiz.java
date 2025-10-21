@@ -41,7 +41,7 @@ public class Quiz {
     private String description;
     @Enumerated(EnumType.STRING)
     private Difficulty difficulty;
-    @Formula("(SELECT count(*) FROM question_set qs WHERE qs.quiz_id = id)")
+    @Formula("(SELECT count(*) FROM question_set qs JOIN questions q ON q.id = qs.question_id WHERE qs.quiz_id = id AND q.status != 'TERMINATE')")
     private Integer totalQuestion;
     @Formula("(SELECT count(*) FROM attempts a WHERE a.quiz_id = id)")
     private Long totalAttempt;

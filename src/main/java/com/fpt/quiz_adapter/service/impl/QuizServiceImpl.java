@@ -4,6 +4,8 @@ import com.fpt.quiz_adapter.entity.Question;
 import com.fpt.quiz_adapter.entity.QuestionSet;
 import com.fpt.quiz_adapter.entity.Quiz;
 import com.fpt.quiz_adapter.entity.Status;
+import com.fpt.quiz_adapter.exception.ConflictException;
+import com.fpt.quiz_adapter.exception.NotFoundException;
 import com.fpt.quiz_adapter.repository.QuestionRepository;
 import com.fpt.quiz_adapter.repository.QuestionSetRepository;
 import com.fpt.quiz_adapter.repository.QuizRepository;
@@ -40,10 +42,11 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public Optional<Quiz> getQuizByQuizId(UUID quizId) {
+    public Quiz getQuizByQuizId(UUID quizId) {
         return quizRepository
             .findOne(Specification
-                .allOf(QuizSpecification.notTerminate(),QuizSpecification.hasQuizId(quizId)));
+                .allOf(QuizSpecification.notTerminate(),QuizSpecification.hasQuizId(quizId)))
+            .orElseThrow(() -> new NotFoundException("This quiz is not found"));
     }
 
     @Override
@@ -53,24 +56,25 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public void addQuestion(UUID quizId, UUID questionId) {
-        quizRepository.findByQuizId(quizId)
-            .ifPresent(quiz -> {
-                 questionRepository.findByQuestionId(questionId)
-                        .ifPresent( question -> {
-                            questionSetRepository.save(QuestionSet.builder()
-                                .quiz(quiz)
-                                .question(question)
-                                .position(quiz.getTotalQuestion())
-                                .build());
-                            quiz.setTotalQuestion(quiz.getTotalQuestion() + 1);
-                            quizRepository.save(quiz);
-                        });
-
-            });
+        Quiz quiz = quizRepository.findByQuizId(quizId)
+            .orElseThrow(() -> new NotFoundException("This quiz is not found"));
+        Question question = questionRepository.findByQuestionId(questionId)
+            .orElseThrow(() -> new NotFoundException("This question is not found"));
+        questionSetRepository.findByQuizIdAndQuestionId(quizId,questionId)
+                .ifPresent(questionSet -> {
+                    throw new ConflictException("This question has already added to the quiz");
+                });
+        questionSetRepository.save(QuestionSet.builder()
+            .quiz(quiz)
+            .question(question)
+            .position(quiz.getTotalQuestion())
+            .build());
+        quiz.setTotalQuestion(quiz.getTotalQuestion() + 1);
+        quizRepository.save(quiz);
     }
 
     @Override
-    public Optional<Quiz> updateQuiz(UUID quizId, Quiz quiz) {
+    public Quiz updateQuiz(UUID quizId, Quiz quiz) {
     return quizRepository
         .findOne(Specification
             .allOf(QuizSpecification.notTerminate(),QuizSpecification.hasQuizId(quizId)))
@@ -79,7 +83,8 @@ public class QuizServiceImpl implements QuizService {
                 Optional.ofNullable((quiz.getDescription())).ifPresent(updatedQuiz::setDescription);
                 Optional.ofNullable(quiz.getVisibility()).ifPresent(updatedQuiz::setVisibility);
                 return quizRepository.save(updatedQuiz);
-            });
+            })
+        .orElseThrow(() -> new NotFoundException("This quiz is not found"));
     }
 
     @Override

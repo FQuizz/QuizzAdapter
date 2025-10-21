@@ -3,9 +3,11 @@ package com.fpt.quiz_adapter.service.impl;
 import com.fpt.quiz_adapter.entity.Answer;
 import com.fpt.quiz_adapter.entity.Attempt;
 import com.fpt.quiz_adapter.entity.AttemptStatus;
+import com.fpt.quiz_adapter.exception.ConflictException;
 import com.fpt.quiz_adapter.repository.AttemptRepository;
 import com.fpt.quiz_adapter.repository.QuizRepository;
 import com.fpt.quiz_adapter.service.AttemptService;
+import com.fpt.quiz_adapter.spec.AttemptSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,8 +22,8 @@ public class AttemptServiceImpl implements AttemptService {
     private final AttemptRepository attemptRepository;
     private final QuizRepository quizRepository;
     @Override
-    public List<Attempt> getAllAttempt() {
-        return attemptRepository.findAll();
+    public List<Attempt> getAllAttempt(UUID quizId) {
+        return attemptRepository.findAll(AttemptSpecification.hasQuizId(quizId));
     }
 
     @Override
@@ -31,6 +33,10 @@ public class AttemptServiceImpl implements AttemptService {
 
     @Override
     public Optional<Attempt> createAttempt(UUID quizId, Attempt attempt) {
+        attemptRepository.findByUsername(attempt.getUsername())
+            .ifPresent( _attempt -> {
+                throw new ConflictException("this username has already existed");
+            });
         return quizRepository.findByQuizId(quizId)
             .map(quiz -> {
                 attempt.setQuiz(quiz);
@@ -49,8 +55,7 @@ public class AttemptServiceImpl implements AttemptService {
                     .mapToLong(Answer::getPoint)
                     .sum();
                 attempt.setScore(totalScore);
-                return attempt;
+                return attemptRepository.save(attempt);
             });
-
     }
 }

@@ -3,6 +3,7 @@ package com.fpt.quiz_adapter.service.impl;
 import com.fpt.quiz_adapter.entity.Choice;
 import com.fpt.quiz_adapter.entity.Question;
 import com.fpt.quiz_adapter.entity.Status;
+import com.fpt.quiz_adapter.exception.NotFoundException;
 import com.fpt.quiz_adapter.repository.QuestionRepository;
 import com.fpt.quiz_adapter.service.QuestionService;
 import com.fpt.quiz_adapter.spec.QuestionSpecification;
@@ -33,13 +34,20 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public Optional<Question> createQuestion( Question question) {
-        question.getChoices().forEach(choice -> choice.setQuestion(question));
-        return Optional.of(questionRepository.save(question));
+    public Question getQuestion(UUID questionId) {
+        return questionRepository.findOne(Specification
+            .allOf(QuestionSpecification.notTerminate(),QuestionSpecification.hasQuestionId(questionId)))
+            .orElseThrow(() -> new NotFoundException("This question is not found"));
     }
 
     @Override
-    public Optional<Question> updateQuestion(UUID questionId, Question question) {
+    public Question createQuestion(Question question) {
+        question.getChoices().forEach(choice -> choice.setQuestion(question));
+        return questionRepository.save(question);
+    }
+
+    @Override
+    public Question updateQuestion(UUID questionId, Question question) {
         return questionRepository
             .findOne(Specification.
                 allOf(QuestionSpecification.notTerminate(),QuestionSpecification.hasQuestionId(questionId)))
@@ -55,7 +63,8 @@ public class QuestionServiceImpl implements QuestionService {
                     q.getChoices().addAll(choices);
                 });
                 return questionRepository.save(q);
-            });
+            })
+            .orElseThrow(() -> new NotFoundException("This question is not found"));
     }
 
     @Override

@@ -13,10 +13,12 @@ public interface QuestionService {
     List<Question> getQuestionsInQuiz(@PathVariable Long id);
     @GetMapping("/get-all-questions/{adminId}")
     List<Question> getAllQuestions(@PathVariable Long adminId);
+    @GetMapping("/get-question/{questionId}")
+    Question getQuestion(@PathVariable UUID questionId);
     @PostMapping("/create-question")
-    Optional<Question> createQuestion( @RequestBody Question question);
+    Question createQuestion( @RequestBody Question question);
     @PutMapping("/update-question/{questionId}")
-    Optional<Question> updateQuestion(@PathVariable UUID questionId, @RequestBody Question question);
+    Question updateQuestion(@PathVariable UUID questionId, @RequestBody Question question);
     @DeleteMapping("/delete-question/{questionId}")
     void deleteQuestion(@PathVariable UUID questionId);
 }

@@ -6,9 +6,10 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.UUID;
 
 public final class AnswerSpecification {
+    private AnswerSpecification(){}
     public static Specification<Answer> belongToAttempt(UUID attemptId){
         return (root, query, criteriaBuilder) -> {
-            return criteriaBuilder.equal(root.get("atttempt.attempt.id"),attemptId);
+            return criteriaBuilder.equal(root.get("attempt").get("attemptId"),attemptId);
         };
     }
 }

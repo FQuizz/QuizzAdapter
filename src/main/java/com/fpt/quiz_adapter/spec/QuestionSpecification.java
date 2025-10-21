@@ -1,6 +1,7 @@
 package com.fpt.quiz_adapter.spec;
 
 import com.fpt.quiz_adapter.entity.Question;
+import com.fpt.quiz_adapter.entity.QuestionSet;
 import com.fpt.quiz_adapter.entity.Status;
 import org.springframework.data.jpa.domain.Specification;
 

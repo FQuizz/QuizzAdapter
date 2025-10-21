@@ -12,4 +12,5 @@ import java.util.UUID;
 public interface AttemptRepository extends JpaRepository<Attempt, Long>, JpaSpecificationExecutor<Attempt> {
     Optional<Attempt> findByAttemptId(UUID attemptId);
 
+    Optional<Attempt> findByUsername(String username);
 }

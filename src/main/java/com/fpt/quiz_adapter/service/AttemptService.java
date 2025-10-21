@@ -8,12 +8,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface AttemptService {
-    @GetMapping("/get-all-attempts")
-    List<Attempt> getAllAttempt();
+    @GetMapping("/get-all-attempts/{quizId}")
+    List<Attempt> getAllAttempt(@PathVariable UUID quizId);
     @GetMapping("/get-attempt/{attemptId}")
     Optional<Attempt> getAttempt(@PathVariable UUID attemptId);
     @PostMapping("/create-attempt/{quizId}")
     Optional<Attempt> createAttempt(@PathVariable UUID quizId, @RequestBody Attempt attempt);
-    @PatchMapping("/finish-attempt/{attemptId}")
+    @PutMapping("/finish-attempt/{attemptId}")
     Optional<Attempt> finishAttempt(@PathVariable UUID attemptId);
 }
