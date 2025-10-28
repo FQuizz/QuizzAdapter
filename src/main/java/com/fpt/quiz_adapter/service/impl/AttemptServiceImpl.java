@@ -9,6 +9,7 @@ import com.fpt.quiz_adapter.repository.QuizRepository;
 import com.fpt.quiz_adapter.service.AttemptService;
 import com.fpt.quiz_adapter.spec.AttemptSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -23,7 +24,8 @@ public class AttemptServiceImpl implements AttemptService {
     private final QuizRepository quizRepository;
     @Override
     public List<Attempt> getAllAttempt(UUID quizId) {
-        return attemptRepository.findAll(AttemptSpecification.hasQuizId(quizId));
+        return attemptRepository.findAll(Specification
+            .allOf(AttemptSpecification.hasQuizId(quizId),AttemptSpecification.orderByScore()));
     }
 
     @Override
@@ -50,11 +52,6 @@ public class AttemptServiceImpl implements AttemptService {
             .map(attempt -> {
                 attempt.setAttemptStatus(AttemptStatus.COMPLETED);
                 attempt.setCompleteAt(LocalDateTime.now());
-                Long totalScore = attempt.getAnswers()
-                    .stream()
-                    .mapToLong(Answer::getPoint)
-                    .sum();
-                attempt.setScore(totalScore);
                 return attemptRepository.save(attempt);
             });
     }

@@ -22,7 +22,9 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "answers")
+@Table(name = "answers",uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"attempt_id", "question_id"})
+})
 @Builder
 @EntityListeners(AuditingEntityListener.class)
 public class Answer {

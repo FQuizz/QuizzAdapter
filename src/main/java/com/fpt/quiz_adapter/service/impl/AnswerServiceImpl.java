@@ -3,6 +3,7 @@ package com.fpt.quiz_adapter.service.impl;
 import com.fpt.quiz_adapter.entity.Answer;
 import com.fpt.quiz_adapter.entity.Choice;
 import com.fpt.quiz_adapter.entity.Question;
+import com.fpt.quiz_adapter.exception.NotFoundException;
 import com.fpt.quiz_adapter.repository.AnswerRepository;
 import com.fpt.quiz_adapter.repository.AttemptRepository;
 import com.fpt.quiz_adapter.repository.ChoiceRepository;
@@ -33,7 +34,7 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     @Transactional
-    public Optional<Answer> submitAnswer(UUID attemptId, Answer answer) {
+    public Answer submitAnswer(UUID attemptId, Answer answer) {
         return attemptRepository.findByAttemptId(attemptId)
             .map(attempt -> {
                 answer.setAttempt(attempt);
@@ -47,7 +48,10 @@ public class AnswerServiceImpl implements AnswerService {
                     })
                     .toList();
                 answer.getChoices().addAll(choices);
+                attempt.setScore(attempt.getScore() + answer.getPoint());
+                attemptRepository.save(attempt);
                 return answerRepository.save(answer);
-            });
+            })
+            .orElseThrow(() -> new NotFoundException("This attempt is not found"));
     }
 }

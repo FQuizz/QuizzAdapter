@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public interface QuizService {
     @GetMapping("/get-all-public-quizzes")
-    List<Quiz> getAllPublicQuizzes();
+    List<Quiz> getAllPublicQuizzes(@RequestParam(required = false) UUID lastQuizId);
     @GetMapping("/get-all-quizzes/{adminId}")
     List<Quiz> getAllQuizzes(@PathVariable Long adminId);
     @GetMapping("/get-quiz-by-quiz-id/{quizId}")

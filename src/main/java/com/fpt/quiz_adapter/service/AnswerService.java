@@ -14,5 +14,5 @@ public interface AnswerService {
     @GetMapping("/get-answers-in-attempt/{attemptId}")
     List<Answer> getAllAnswerInAttempt(@PathVariable UUID attemptId);
     @PostMapping("submit-answer/{attemptId}")
-    Optional<Answer> submitAnswer(@PathVariable UUID attemptId, @RequestBody Answer answer);
+    Answer submitAnswer(@PathVariable UUID attemptId, @RequestBody Answer answer);
 }

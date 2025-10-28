@@ -1,9 +1,6 @@
 package com.fpt.quiz_adapter.service.impl;
 
-import com.fpt.quiz_adapter.entity.Question;
-import com.fpt.quiz_adapter.entity.QuestionSet;
-import com.fpt.quiz_adapter.entity.Quiz;
-import com.fpt.quiz_adapter.entity.Status;
+import com.fpt.quiz_adapter.entity.*;
 import com.fpt.quiz_adapter.exception.ConflictException;
 import com.fpt.quiz_adapter.exception.NotFoundException;
 import com.fpt.quiz_adapter.repository.QuestionRepository;
@@ -28,10 +25,12 @@ public class QuizServiceImpl implements QuizService {
     private final QuestionSetRepository questionSetRepository;
     private final QuestionRepository questionRepository;
     @Override
-    public List<Quiz> getAllPublicQuizzes() {
-        return quizRepository
-            .findAll(Specification
-                .allOf(QuizSpecification.isPublic(),QuizSpecification.isActive()));
+    public List<Quiz> getAllPublicQuizzes(UUID lastQuizId) {
+        if(lastQuizId == null){
+            return quizRepository.findTop8ByStatusAndVisibilityOrderByIdAsc(Status.ACTIVE, Visibility.PUBLIC);
+        }
+        Quiz quiz = quizRepository.findByQuizId(lastQuizId).orElseThrow(() -> new NotFoundException("Quiz not found"));
+        return quizRepository.findTop8ByIdGreaterThanAndStatusAndVisibilityOrderByIdAsc(quiz.getId(),Status.ACTIVE, Visibility.PUBLIC);
     }
 
     @Override
